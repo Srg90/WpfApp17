@@ -7,9 +7,31 @@
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="600"
              Name="colorPicker">
-    
+    <UserControl.Resources>
+        <DataTemplate x:Key="Template">
+            <Border x:Name="border" BorderBrush="Aquamarine" BorderThickness="3">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding Path=Name}"/>
+                    <Rectangle Grid.Column="1">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding Path=ColorName}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
     <Viewbox>
-        <Grid Height="100" Width="300">
+        <TabControl>
+            <TabItem Header="Цвет">
+        <Grid Height="Auto" Width="300">
             <Grid.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FF56D43C"/>
@@ -17,6 +39,7 @@
                 </LinearGradientBrush>
             </Grid.Background>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -34,11 +57,55 @@
             <Slider Name="sliderBlue" Minimum="0" Maximum="255" Grid.Row="2"
                 Value="{Binding Path=Blue, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type UserControl}}}"
                 Margin="5" Padding="5" Background="Blue" Grid.Column="0" Width="240"/>
-            <Rectangle Grid.Column="1" Grid.RowSpan="3" Width="45" Stroke="Red" StrokeThickness="2" Margin="5">
+            <Rectangle Name="rectColor" Grid.Column="1" Grid.RowSpan="3" Width="45" Margin="5">
                 <Rectangle.Fill>
-                    <SolidColorBrush Color="{Binding ElementName=colorPicker,Path=Color}"/>
+                    <SolidColorBrush Color="{Binding ElementName=colorPicker,Path=Color, Mode=TwoWay}"/>
                 </Rectangle.Fill>
+                <Rectangle.Stroke>
+                    <SolidColorBrush Color="{Binding ElementName=colorPicker,Path=Color, Mode=TwoWay}"/>
+                </Rectangle.Stroke>
             </Rectangle>
+            <GroupBox Grid.Row="3" Header="Настройка цветовой гаммы" Margin="5" Padding="1" 
+                      BorderThickness="2" BorderBrush="#FFFF0075" 
+                      FontFamily="Arial" FontSize="12" Grid.ColumnSpan="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Полученное значение" Grid.Row="0" Grid.Column="0"/>
+                    <TextBox Name="txb1" Margin="5" Grid.Row="0" Grid.Column="1" IsReadOnly="true" Text="{Binding ElementName=colorPicker, Path=Color}"/>
+                    <Label Content="Введите значение" Grid.Row="1" Grid.Column="0"/>
+                    <TextBox Name="txb2" Margin="5" Grid.Row="1" Grid.Column="1" TextChanged="txb2_TextChanged" />
+                    <Button Content="Сброс цвета" Name="resetColor" Grid.Row="2" Margin="5" Grid.Column="0" Click="resetColor_Click"/>
+                    <Button Content="Запомнить" Name="rememberColor" Grid.Row="2" Margin="5" Grid.Column="1" Click="rememberColor_Click"/>
+                </Grid>
+            </GroupBox>
         </Grid>
+            </TabItem>
+            <TabItem Header="Список">
+                <UniformGrid Width="300">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Очистить список" Name="removeList" Margin="5" Grid.Row="0" Grid.Column="0" Click="removeList_Click"/>
+                    <Button Content="Удалить элемент" Name="removeListAt" Margin="5" Grid.Row="0" Grid.Column="1" Click="removeListAt_Click"/>
+                    <ListBox Name="listType" HorizontalContentAlignment="Stretch" ItemTemplate="{StaticResource Template}" Margin="5" Grid.Row="1" Grid.ColumnSpan="2"/>
+                </Grid>
+                </UniformGrid>
+            </TabItem>
+        </TabControl>
     </Viewbox>
     </UserControl>

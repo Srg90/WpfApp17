@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,13 +23,28 @@ namespace WpfApp17
     public partial class Indicator : UserControl
     {
         public static readonly RoutedEvent ColorChangedEvent;
-
+        public ObservableCollection<Indicator> colorslist;
 
         public static DependencyProperty ColorProperty;
         public static DependencyProperty RedProperty;
         public static DependencyProperty GreenProperty;
         public static DependencyProperty BlueProperty;
-              
+        
+        
+
+        public Indicator()
+        {
+            InitializeComponent();
+            colorslist = new ObservableCollection<Indicator>();
+            listType.ItemsSource = colorslist;
+
+        }
+        public class Colorslist
+        {
+            public string Name { get; set; }
+        }
+     
+
         static Indicator()
         {
             
@@ -50,6 +67,7 @@ namespace WpfApp17
             get { return (Color)GetValue(ColorProperty); }
             set { SetValue(ColorProperty, value); }
         }
+        
         public byte Red
         {
             get { return (byte)GetValue(RedProperty); }
@@ -65,6 +83,8 @@ namespace WpfApp17
             get { return (byte)GetValue(BlueProperty); }
             set { SetValue(BlueProperty, value); }
         }
+
+        public object ColorName { get; private set; }
 
         public event RoutedPropertyChangedEventHandler<Color> ColorChanged
         {
@@ -97,7 +117,61 @@ namespace WpfApp17
             colorpicker.Blue = newColor.B;
         }
 
+        //private void colorPicker_ColorChanged(DependencyObject sender,
+        //DependencyPropertyChangedEventArgs e)
+        //{
+        //    Color newColor = (Color)e.NewValue;
+        //    Indicator colorpicker = (Indicator)sender;
+        //    txb1.Text = e.NewValue.ToString();
+        //}
+        
+        private void txb2_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (txb2.Text == "")
+                {
+                    Color color1 = (Color)ColorConverter.ConvertFromString(txb1.Text);
+                    colorPicker.Color = color1;
+                }
+                else if (txb2.Text != "")
+                {
+                    Color color = (Color)ColorConverter.ConvertFromString(txb2.Text);
+                    colorPicker.Color = color;
+                }
+            }
+            catch
+            {
 
+            }
 
+        }
+
+        private void resetColor_Click(object sender, RoutedEventArgs e)
+        {
+            Color color = Colors.Black;
+            colorPicker.Color = color;
+        }
+
+        private void rememberColor_Click(object sender, RoutedEventArgs e)
+        {
+            string colorcode = (txb1.Text).Replace("#","");
+
+            colorslist.Add(new Indicator()
+            {
+                Name = colorcode,
+                ColorName = txb1.Text
+            });
+        }
+
+        private void removeList_Click(object sender, RoutedEventArgs e)
+        {
+            colorslist.Clear();
+        }
+
+        private void removeListAt_Click(object sender, RoutedEventArgs e)
+        {
+            colorslist.RemoveAt(colorslist.Count - 1);
+        }
     }
 }
